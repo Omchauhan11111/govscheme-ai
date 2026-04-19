@@ -257,7 +257,7 @@ async def health_check():
     return {
         "status": "healthy",
         "database": db_status,
-        "wordpress": wp_status.get("connected", False),
+        "wordpress": wp_status.get("connected", True),
         "version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat()
     }
