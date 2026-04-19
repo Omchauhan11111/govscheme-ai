@@ -3,20 +3,27 @@ from requests.auth import HTTPBasicAuth
 import logging
 from datetime import datetime
 from bson import ObjectId
+import os
+from dotenv import load_dotenv
 
 from .config import settings
 from .database import get_db
 
+# Load env variables
+load_dotenv()
+
 logger = logging.getLogger(__name__)
 
-BASE_URL = "http://localhost/php/wordpress/wp-json"
+# ENV variables (UPDATED)
+BASE_URL = os.getenv("WP_BASE_URL")
 TOKEN_URL = f"{BASE_URL}/jwt-auth/v1/token"
 POST_URL = f"{BASE_URL}/wp/v2/posts"
 
-USERNAME = "admin"
-PASSWORD = "digitalgo1111"
+USERNAME = os.getenv("WP_USERNAME")
+PASSWORD = os.getenv("WP_PASSWORD")
 
 TOKEN_CACHE = None
+
 
 def get_token():
     global TOKEN_CACHE
@@ -27,6 +34,11 @@ def get_token():
             "username": USERNAME,
             "password": PASSWORD
         }, timeout=10)
+
+        # Debug (optional but helpful)
+        print("Token Status:", response.status_code)
+        print("Token Response:", response.text)
+
         if response.status_code == 200:
             TOKEN_CACHE = response.json()["token"]
             return TOKEN_CACHE
@@ -37,12 +49,14 @@ def get_token():
         logger.error(f"Token fetch failed: {e}")
         return None
 
+
 def is_duplicate(title):
     try:
         response = requests.get(f"{POST_URL}?search={title}", timeout=10)
         return response.status_code == 200 and len(response.json()) > 0
     except:
         return False
+
 
 def publish_blogs_to_wordpress(limit: int = 5) -> dict:
     db = get_db()
@@ -59,7 +73,7 @@ def publish_blogs_to_wordpress(limit: int = 5) -> dict:
 
             wp_id = _post_to_wordpress(blog)
             if wp_id:
-                wp_url = f"http://localhost/php/wordpress/?p={wp_id}"
+                wp_url = f"{BASE_URL.replace('/wp-json','')}/?p={wp_id}"
                 db.blogs.update_one(
                     {"_id": blog["_id"]},
                     {"$set": {
@@ -85,6 +99,7 @@ def publish_blogs_to_wordpress(limit: int = 5) -> dict:
         "timestamp": datetime.utcnow().isoformat()
     }
 
+
 def _post_to_wordpress(blog: dict) -> int:
     token = get_token()
     if not token:
@@ -104,12 +119,18 @@ def _post_to_wordpress(blog: dict) -> int:
     }
 
     response = requests.post(POST_URL, json=data, headers=headers, timeout=30)
+
+    # Debug
+    print("Post Status:", response.status_code)
+    print("Post Response:", response.text)
+
     logger.info(f"WP Response: {response.status_code}")
 
     if response.status_code == 201:
         return response.json()["id"]
     else:
         raise Exception(f"WP Error {response.status_code}: {response.text[:200]}")
+
 
 def test_wordpress_connection() -> dict:
     try:
