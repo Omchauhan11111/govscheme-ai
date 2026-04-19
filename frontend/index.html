@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GovScheme AI Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface2: #f2f0ec;
+  --border: #e8e5df;
+  --border2: #d4cfc6;
+  --text: #1a1814;
+  --text2: #5c574e;
+  --text3: #9b9590;
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+  --primary-dark: #1d4ed8;
+  --success: #16a34a;
+  --success-light: #f0fdf4;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --orange: #ea580c;
+  --orange-light: #fff7ed;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ─── LAYOUT ─── */
+.app { display: flex; min-height: 100vh; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 18px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+.logo-text h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.logo-text span {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+.sidebar-badge {
+  margin: 8px 20px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--success-light);
+  color: var(--success);
+  border-radius: 20px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.sidebar-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.nav-label {
+  padding: 8px 20px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  cursor: pointer;
+  border-radius: 0;
+  color: var(--text2);
+  font-size: 13.5px;
+  font-weight: 400;
+  transition: all 0.15s ease;
+  position: relative;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--primary);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.scheduler-card {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.scheduler-label {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.scheduler-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scheduler-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.scheduler-dot {
+  width: 8px; height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* ─── MAIN CONTENT ─── */
+.main {
+  flex: 1;
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  position: sticky; top: 0;
+  background: rgba(248,247,244,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 50;
+}
+
+.topbar-left h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.topbar-left p {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 1px 3px rgba(37,99,235,0.3);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.btn-outline {
+  background: var(--surface);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+
+.btn-outline:hover { background: var(--surface2); color: var(--text); }
+
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #15803d; transform: translateY(-1px); }
+
+.btn-warning { background: var(--warning); color: white; }
+.btn-warning:hover { background: #b45309; transform: translateY(-1px); }
+
+.btn-danger-outline {
+  background: white;
+  color: var(--danger);
+  border: 1px solid #fca5a5;
+}
+.btn-danger-outline:hover { background: var(--danger-light); }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-lg { padding: 11px 22px; font-size: 14px; }
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── PAGE ─── */
+.page { display: none; padding: 28px; }
+.page.active { display: block; }
+
+/* ─── STAT CARDS ─── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover { box-shadow: var(--shadow); }
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 60px;
+  border-radius: 0 12px 0 60px;
+  opacity: 0.07;
+}
+
+.stat-card.blue::after { background: var(--primary); }
+.stat-card.green::after { background: var(--success); }
+.stat-card.orange::after { background: var(--orange); }
+.stat-card.purple::after { background: var(--purple); }
+
+.stat-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.stat-icon.blue { background: var(--primary-light); }
+.stat-icon.green { background: var(--success-light); }
+.stat-icon.orange { background: var(--orange-light); }
+.stat-icon.purple { background: var(--purple-light); }
+
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12.5px;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+.stat-sub {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-sub .up { color: var(--success); }
+.stat-sub .down { color: var(--danger); }
+
+/* ─── PIPELINE SECTION ─── */
+.pipeline-section {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.section-title p {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.pipeline-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.step-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.step-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 14px;
+  z-index: 1;
+}
+
+.step-number {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 auto 8px;
+  transition: all 0.3s;
+}
+
+.step-card.done .step-number {
+  background: var(--success);
+  color: white;
+}
+
+.step-card.running .step-number {
+  background: var(--primary);
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+.step-card.error .step-number {
+  background: var(--danger);
+  color: white;
+}
+
+.step-emoji { font-size: 20px; margin-bottom: 6px; }
+.step-name { font-size: 12px; font-weight: 500; color: var(--text); }
+.step-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.step-result { font-size: 11px; color: var(--success); font-weight: 600; margin-top: 4px; }
+
+.pipeline-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar-wrap {
+  background: var(--surface2);
+  border-radius: 8px;
+  height: 6px;
+  margin: 16px 0 8px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #60a5fa);
+  border-radius: 8px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--text3);
+  text-align: center;
+}
+
+/* ─── GRID LAYOUT ─── */
+.two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+/* ─── CARD ─── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.card-body { padding: 20px; }
+
+/* ─── TABLE ─── */
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: var(--surface2);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+
+.table-title {
+  font-weight: 500;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-title a { color: var(--primary); text-decoration: none; }
+.table-title a:hover { text-decoration: underline; }
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.badge-blue { background: var(--primary-light); color: var(--primary); }
+.badge-green { background: var(--success-light); color: var(--success); }
+.badge-orange { background: var(--orange-light); color: var(--orange); }
+.badge-red { background: var(--danger-light); color: var(--danger); }
+.badge-gray { background: var(--surface2); color: var(--text2); }
+.badge-purple { background: var(--purple-light); color: var(--purple); }
+.badge-teal { background: var(--teal-light); color: var(--teal); }
+.badge-warning { background: var(--warning-light); color: var(--warning); }
+
+/* ─── CHARTS ─── */
+.chart-container {
+  position: relative;
+  height: 220px;
+}
+
+.donut-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: var(--text2);
+  width: 160px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  flex: 1;
+  background: var(--surface2);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  width: 28px;
+  text-align: right;
+}
+
+/* ─── BLOG PREVIEW MODAL ─── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 800px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.modal-close:hover { background: var(--surface2); color: var(--text); }
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.modal-body h1, .modal-body h2 {
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+  color: var(--text);
+  margin: 20px 0 10px;
+}
+
+.modal-body h1 { font-size: 22px; margin-top: 0; }
+.modal-body h2 { font-size: 17px; color: var(--primary); }
+
+.modal-body p { margin: 10px 0; color: var(--text2); line-height: 1.7; }
+
+.modal-body ul, .modal-body ol {
+  margin: 10px 0;
+  padding-left: 22px;
+  color: var(--text2);
+}
+
+.modal-body li { margin: 5px 0; line-height: 1.6; }
+
+.modal-body strong { color: var(--text); }
+.modal-body a { color: var(--primary); }
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ─── TOAST ─── */
+.toast-container {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  min-width: 280px;
+  max-width: 380px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  animation: toastIn 0.3s ease;
+  border-left: 4px solid var(--primary);
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--warning); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.toast-content {}
+.toast-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.toast-msg { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* ─── LOGS PAGE ─── */
+.log-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.15s;
+}
+
+.log-item:hover { background: var(--bg); }
+.log-item:last-child { border-bottom: none; }
+
+.log-type-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.log-time {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.log-details {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+/* ─── API DOCS ─── */
+.api-endpoint {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.api-endpoint-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.api-endpoint-header:hover { background: var(--bg); }
+
+.method-badge {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.method-get { background: var(--success-light); color: var(--success); }
+.method-post { background: var(--primary-light); color: var(--primary); }
+.method-delete { background: var(--danger-light); color: var(--danger); }
+
+.endpoint-path {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.endpoint-desc {
+  font-size: 12px;
+  color: var(--text3);
+  margin-left: auto;
+}
+
+.api-endpoint-body {
+  display: none;
+  padding: 16px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.api-endpoint-body.open { display: block; }
+
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.code-block .comment { color: #6c7086; }
+.code-block .key { color: #89b4fa; }
+.code-block .value { color: #a6e3a1; }
+.code-block .string { color: #f9e2af; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text3);
+}
+
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state h4 { font-size: 15px; color: var(--text2); margin-bottom: 6px; }
+.empty-state p { font-size: 13px; }
+
+/* ─── FILTERS ─── */
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.filter-select {
+  padding: 7px 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.filter-select:focus { border-color: var(--primary); }
+
+.search-input {
+  flex: 1;
+  max-width: 300px;
+  padding: 7px 12px 7px 32px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  position: relative;
+}
+
+.search-wrap { position: relative; }
+.search-wrap::before {
+  content: '🔍';
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.search-input:focus { border-color: var(--primary); }
+
+/* ─── PAGINATION ─── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.page-info { font-size: 12px; color: var(--text3); }
+
+.page-btns { display: flex; gap: 6px; }
+
+.page-btn {
+  width: 30px; height: 30px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+.page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .pipeline-steps { grid-template-columns: repeat(3, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main { margin-left: 0; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">🏛️</div>
+        <div class="logo-text">
+          <h1>GovScheme AI</h1>
+          <span>Monitoring System</span>
+        </div>
+      </div>
+      <div class="sidebar-badge">Live System</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+
+      <div class="nav-label" style="margin-top:8px">Pipeline</div>
+      <button class="nav-item" onclick="showPage('pipeline')">
+        <span class="nav-icon">⚡</span> Run Pipeline
+      </button>
+      <button class="nav-item" onclick="showPage('schemes')">
+        <span class="nav-icon">📋</span> Schemes
+      </button>
+      <button class="nav-item" onclick="showPage('blogs')">
+        <span class="nav-icon">📝</span> Blog Posts
+      </button>
+
+      <div class="nav-label" style="margin-top:8px">System</div>
+      <button class="nav-item" onclick="showPage('logs')">
+        <span class="nav-icon">🕐</span> Activity Logs
+      </button>
+      <button class="nav-item" onclick="showPage('api-docs')">
+        <span class="nav-icon">📖</span> API Docs
+      </button>
+      <button class="nav-item" onclick="showPage('settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="scheduler-card">
+        <div class="scheduler-label">Auto-Scheduler</div>
+        <div class="scheduler-status">
+          <span class="scheduler-time">Daily at 7:00 AM</span>
+          <span class="scheduler-dot"></span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px" id="nextRun">Next: calculating...</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageDesc">Overview of your AI monitoring system</p>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-outline btn-sm" onclick="refreshCurrentPage()">🔄 Refresh</button>
+        <button class="btn btn-primary btn-sm" onclick="showPage('pipeline'); runFullPipeline()">⚡ Run Pipeline</button>
+      </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon blue">📋</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total Schemes</div>
+          <div class="stat-sub"><span class="up">↑</span> from RSS feeds</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-value" id="stat-relevant">—</div>
+          <div class="stat-label">Relevant Schemes</div>
+          <div class="stat-sub">AI verified</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon orange">📝</div>
+          <div class="stat-value" id="stat-blogs">—</div>
+          <div class="stat-label">Blogs Generated</div>
+          <div class="stat-sub">SEO optimized</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-icon purple">🌐</div>
+          <div class="stat-value" id="stat-published">—</div>
+          <div class="stat-label">Published on WP</div>
+          <div class="stat-sub">Live posts</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Category Chart -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Schemes by Category</span>
+            <span class="badge badge-blue">AI Classified</span>
+          </div>
+          <div class="card-body">
+            <div class="donut-chart" id="categoryChart">
+              <div class="empty-state"><div class="empty-icon">📊</div><p>Loading categories...</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">System Health</span></div>
+            <div class="card-body" style="padding:16px">
+              <div id="healthStatus" style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;color:var(--text2)">🗄️ Database</span>
+                  <span class="badge badge-gray" id="db-status">Checking...</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;color:var(--text2)">🤖 Gemini AI</span>
+                  <span class="badge badge-green">Active</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;color:var(--text2)">🌐 WordPress</span>
+                  <span class="badge badge-gray" id="wp-status">Checking...</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;color:var(--text2)">⏰ Scheduler</span>
+                  <span class="badge badge-green">Running</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">Pipeline Stats</span></div>
+            <div class="card-body" style="padding:16px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between">
+                  <span style="font-size:12px;color:var(--text3)">Pending Filter</span>
+                  <span style="font-size:13px;font-weight:600" id="stat-pending">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="font-size:12px;color:var(--text3)">Blogs Draft</span>
+                  <span style="font-size:13px;font-weight:600" id="stat-draft">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="font-size:12px;color:var(--text3)">Pipeline Runs (7d)</span>
+                  <span style="font-size:13px;font-weight:600" id="stat-runs">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PIPELINE PAGE ===== -->
+    <div class="page" id="page-pipeline">
+      <div class="pipeline-section">
+        <div class="section-header">
+          <div class="section-title">
+            <span style="font-size:24px">⚡</span>
+            <div>
+              <h3>Full Pipeline</h3>
+              <p>Fetch → AI Filter → Generate Blog → Publish → Notify</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipeline-steps">
+          <div class="step-card" id="step-1">
+            <div class="step-number">1</div>
+            <div class="step-emoji">📡</div>
+            <div class="step-name">Fetch</div>
+            <div class="step-sub">RSS Feeds</div>
+            <div class="step-result" id="result-1"></div>
+          </div>
+          <div class="step-card" id="step-2">
+            <div class="step-number">2</div>
+            <div class="step-emoji">🤖</div>
+            <div class="step-name">AI Filter</div>
+            <div class="step-sub">Gemini 2.0</div>
+            <div class="step-result" id="result-2"></div>
+          </div>
+          <div class="step-card" id="step-3">
+            <div class="step-number">3</div>
+            <div class="step-emoji">✍️</div>
+            <div class="step-name">Generate Blog</div>
+            <div class="step-sub">SEO Content</div>
+            <div class="step-result" id="result-3"></div>
+          </div>
+          <div class="step-card" id="step-4">
+            <div class="step-number">4</div>
+            <div class="step-emoji">🌐</div>
+            <div class="step-name">Publish</div>
+            <div class="step-sub">WordPress</div>
+            <div class="step-result" id="result-4"></div>
+          </div>
+          <div class="step-card" id="step-5">
+            <div class="step-number">5</div>
+            <div class="step-emoji">📧</div>
+            <div class="step-name">Notify</div>
+            <div class="step-sub">Email</div>
+            <div class="step-result" id="result-5"></div>
+          </div>
+        </div>
+
+        <div id="pipelineProgress" style="display:none">
+          <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+          <p class="progress-label" id="progressLabel">Initializing...</p>
+        </div>
+
+        <div class="pipeline-actions">
+          <button class="btn btn-primary btn-lg" id="btnRunAll" onclick="runFullPipeline()">
+            <span>⚡</span> Run Full Pipeline
+          </button>
+          <button class="btn btn-outline" onclick="runStep('fetch')">📡 Fetch Only</button>
+          <button class="btn btn-outline" onclick="runStep('filter')">🤖 Filter Only</button>
+          <button class="btn btn-outline" onclick="runStep('generate')">✍️ Generate Blogs</button>
+          <button class="btn btn-outline" onclick="runStep('publish')">🌐 Publish to WP</button>
+        </div>
+      </div>
+
+      <!-- Pipeline Result Log -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pipeline Output</span>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('pipelineOutput').textContent='Cleared.'">Clear</button>
+        </div>
+        <div class="card-body">
+          <div id="pipelineOutput" class="code-block" style="min-height:120px;white-space:pre-wrap">Waiting for pipeline run...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCHEMES PAGE ===== -->
+    <div class="page" id="page-schemes">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Schemes</span>
+          <span class="badge badge-blue" id="schemes-count">Loading...</span>
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="filters">
+            <div class="search-wrap">
+              <input type="text" class="search-input" id="schemeSearch" placeholder="Search schemes..." oninput="debounce(loadSchemes, 400)()"/>
+            </div>
+            <select class="filter-select" id="filterCategory" onchange="loadSchemes()">
+              <option value="">All Categories</option>
+              <option>Agriculture & Farming</option>
+              <option>Education & Scholarship</option>
+              <option>Health & Medical</option>
+              <option>Women & Child Development</option>
+              <option>Employment & Skill Development</option>
+              <option>Housing & Infrastructure</option>
+              <option>Financial Inclusion & Banking</option>
+              <option>Senior Citizens & Pension</option>
+              <option>Environment & Energy</option>
+            </select>
+            <select class="filter-select" id="filterRelevant" onchange="loadSchemes()">
+              <option value="">All</option>
+              <option value="true">Relevant</option>
+              <option value="false">Not Relevant</option>
+              <option value="null">Pending Filter</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Source</th>
+                <th>Date</th>
+                <th>Blog</th>
+              </tr>
+            </thead>
+            <tbody id="schemesTableBody">
+              <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">Loading schemes...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="schemesPagination"></div>
+      </div>
+    </div>
+
+    <!-- ===== BLOGS PAGE ===== -->
+    <div class="page" id="page-blogs">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Generated Blog Posts</span>
+          <div style="display:flex;gap:8px">
+            <span class="badge badge-blue" id="blogs-count">Loading...</span>
+          </div>
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="filters">
+            <select class="filter-select" id="filterBlogStatus" onchange="loadBlogs()">
+              <option value="">All</option>
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Blog Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Tags</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="blogsTableBody">
+              <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">Loading blogs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="blogsPagination"></div>
+      </div>
+    </div>
+
+    <!-- ===== LOGS PAGE ===== -->
+    <div class="page" id="page-logs">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pipeline Activity Logs</span>
+          <button class="btn btn-outline btn-sm" onclick="loadLogs()">🔄 Refresh</button>
+        </div>
+        <div id="logsContainer">
+          <div class="empty-state"><div class="empty-icon">📋</div><p>Loading logs...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== API DOCS PAGE ===== -->
+    <div class="page" id="page-api-docs">
+      <div style="max-width:860px">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--text2)">Base URL: <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:monospace">http://localhost:8000/api/v1</code> &nbsp;|&nbsp; Full Swagger: <a href="http://localhost:8000/docs" target="_blank" style="color:var(--primary)">http://localhost:8000/docs</a></p>
+          </div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Pipeline Endpoints</h4>
+        <div id="apiPipeline"></div>
+
+        <h4 style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:20px 0 10px">Data Endpoints</h4>
+        <div id="apiData"></div>
+
+        <h4 style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:20px 0 10px">Monitoring Endpoints</h4>
+        <div id="apiMonitor"></div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page" id="page-settings">
+      <div style="max-width:600px">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">API Configuration</span></div>
+          <div class="card-body">
+            <div style="margin-bottom:14px">
+              <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px">Backend API URL</label>
+              <input type="text" id="settingApiUrl" value="http://localhost:8000/api/v1"
+                style="width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none"/>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save Settings</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">Danger Zone</span></div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Clear all data from the database. This cannot be undone.</p>
+            <button class="btn btn-danger-outline btn-sm" onclick="clearAllData()">🗑️ Clear All Data</button>
+          </div>
+        </div>
+
+        <!-- Settings page me add karo -->
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header"><span class="card-title">🧹 Database Cleanup</span></div>
+  <div class="card-body">
+    <div id="storageStats" style="margin-bottom:16px;font-size:13px;color:var(--text2)">
+      Loading stats...
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline btn-sm" onclick="loadStorageStats()">
+        📊 Check Storage
+      </button>
+      <button class="btn btn-warning btn-sm" onclick="runCleanup(7, 30)">
+        🧹 Clean (7d irrelevant + 30d logs)
+      </button>
+      <button class="btn btn-danger-outline btn-sm" onclick="runCleanup(1, 7)">
+        ⚡ Aggressive Clean (1d + 7d)
+      </button>
+    </div>
+  </div>
+</div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">About</span></div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--text2);line-height:1.8">
+              <strong>GovScheme AI Monitor v1.0.0</strong><br>
+              AI-Based Government Scheme Monitoring System<br>
+              Built with FastAPI + Gemini AI + MongoDB<br>
+              <em>Om Singh Chauhan</em>
+              <br>
+              Career Point University, Kota
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- BLOG PREVIEW MODAL -->
+<div class="modal-overlay" id="blogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalBlogTitle">Blog Title</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBlogBody"></div>
+    <div class="modal-footer">
+      <span class="badge" id="modalBlogStatus"></span>
+      <a id="modalWpLink" href="#" target="_blank" class="btn btn-outline btn-sm" style="display:none">🌐 View on WordPress</a>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───
+let API = localStorage.getItem('apiUrl') || 'http://localhost:8000/api/v1';
+let currentPage = { schemes: 1, blogs: 1 };
+
+// ─── NAVIGATION ───
+const pageMeta = {
+  'dashboard': ['Dashboard', 'Real-time overview of your AI monitoring system'],
+  'pipeline': ['Run Pipeline', 'Manually trigger the AI processing pipeline'],
+  'schemes': ['Schemes', 'Browse all fetched government schemes'],
+  'blogs': ['Blog Posts', 'View and manage generated SEO blog posts'],
+  'logs': ['Activity Logs', 'Pipeline execution history'],
+  'api-docs': ['API Documentation', 'REST API reference for all endpoints'],
+  'settings': ['Settings', 'Configure system settings']
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(name.toLowerCase().replace('-', ' '))) n.classList.add('active');
+  });
+  const meta = pageMeta[name] || [name, ''];
+  document.getElementById('pageTitle').textContent = meta[0];
+  document.getElementById('pageDesc').textContent = meta[1];
+
+  // Load page data
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'schemes') loadSchemes();
+  if (name === 'blogs') loadBlogs();
+  if (name === 'logs') loadLogs();
+  if (name === 'api-docs') renderApiDocs();
+}
+
+function refreshCurrentPage() {
+  const activePage = document.querySelector('.page.active')?.id?.replace('page-', '');
+  if (activePage) showPage(activePage);
+}
+
+// ─── API HELPER ───
+async function api(path, options = {}) {
+  const url = API + path;
+  try {
+    const res = await fetch(url, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    return await res.json();
+  } catch (e) {
+    console.error('API Error:', e);
+    throw e;
+  }
+}
+
+// ─── TOAST ───
+function toast(title, msg, type = 'info') {
+  const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]}</span><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ─── DASHBOARD ───
+async function loadDashboard() {
+  try {
+    const [stats, health] = await Promise.all([
+      api('/stats'),
+      api('/health')
+    ]);
+
+    document.getElementById('stat-total').textContent = stats.schemes.total;
+    document.getElementById('stat-relevant').textContent = stats.schemes.relevant;
+    document.getElementById('stat-blogs').textContent = stats.blogs.total;
+    document.getElementById('stat-published').textContent = stats.blogs.published;
+    document.getElementById('stat-pending').textContent = stats.schemes.pending_filter;
+    document.getElementById('stat-draft').textContent = stats.blogs.draft;
+    document.getElementById('stat-runs').textContent = stats.pipeline_runs_7d;
+
+    // Health
+    document.getElementById('db-status').textContent = health.database === 'connected' ? '✅ Connected' : '❌ Disconnected';
+    document.getElementById('db-status').className = `badge ${health.database === 'connected' ? 'badge-green' : 'badge-red'}`;
+    document.getElementById('wp-status').textContent = health.wordpress ? '✅ Connected' : '⚠️ Not configured';
+    document.getElementById('wp-status').className = `badge ${health.wordpress ? 'badge-green' : 'badge-warning'}`;
+
+    // Category chart
+    renderCategoryChart(stats.categories || []);
+  } catch(e) {
+    toast('Error', 'Could not load dashboard. Is the backend running?', 'error');
+  }
+}
+
+const BAR_COLORS = ['#2563eb','#16a34a','#d97706','#7c3aed','#0d9488','#ea580c','#dc2626','#0284c7','#65a30d'];
+
+function renderCategoryChart(categories) {
+  const container = document.getElementById('categoryChart');
+  if (!categories.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>No data yet. Run the pipeline!</p></div>';
+    return;
+  }
+  const max = Math.max(...categories.map(c => c.count));
+  container.innerHTML = categories.map((cat, i) => `
+    <div class="bar-item">
+      <span class="bar-label">${cat.name || 'Unknown'}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(cat.count/max*100).toFixed(1)}%;background:${BAR_COLORS[i%BAR_COLORS.length]}"></div>
+      </div>
+      <span class="bar-count">${cat.count}</span>
+    </div>
+  `).join('');
+}
+
+// ─── PIPELINE ───
+let pipelineRunning = false;
+
+async function runFullPipeline() {
+  if (pipelineRunning) return;
+  pipelineRunning = true;
+
+  const btn = document.getElementById('btnRunAll');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Running...';
+
+  // Reset steps
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById(`step-${i}`).className = 'step-card';
+    document.getElementById(`result-${i}`).textContent = '';
+  }
+
+  const progress = document.getElementById('pipelineProgress');
+  const bar = document.getElementById('progressBar');
+  const label = document.getElementById('progressLabel');
+  const output = document.getElementById('pipelineOutput');
+  progress.style.display = 'block';
+
+  const stepLabels = ['Fetching RSS feeds...', 'AI filtering schemes...', 'Generating blog posts...', 'Publishing to WordPress...', 'Sending notifications...'];
+  const resultKeys = ['fetch', 'filter', 'blog', 'publish', 'notify'];
+  const resultTexts = [
+    r => `${r.total_new || 0} new`,
+    r => `${r.relevant || 0} relevant`,
+    r => `${r.generated || 0} posts`,
+    r => `${r.published || 0} live`,
+    r => r.sent ? '✅ sent' : '⚠️ skip'
+  ];
+
+  // Animate steps with progress
+  output.textContent = 'Starting full pipeline...\n';
+
+  try {
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById(`step-${i}`).className = 'step-card running';
+      bar.style.width = `${(i - 1) * 20}%`;
+      label.textContent = stepLabels[i - 1];
+      await sleep(300);
+    }
+
+    label.textContent = 'Processing all steps...';
+    bar.style.width = '60%';
+
+    const result = await api('/pipeline/run-all', { method: 'POST' });
+
+    bar.style.width = '100%';
+    label.textContent = 'Pipeline complete! ✅';
+
+    // Update step results
+    resultKeys.forEach((key, i) => {
+      const card = document.getElementById(`step-${i + 1}`);
+      const res = document.getElementById(`result-${i + 1}`);
+      card.className = 'step-card done';
+      res.textContent = resultTexts[i](result[key] || {});
+    });
+
+    output.textContent = JSON.stringify(result, null, 2);
+    toast('Pipeline Complete!', `Fetched ${result.fetch?.total_new || 0} schemes, generated ${result.blog?.generated || 0} blogs`, 'success');
+    loadDashboard();
+  } catch(e) {
+    bar.style.width = '100%';
+    bar.style.background = 'var(--danger)';
+    label.textContent = 'Pipeline failed ❌';
+    output.textContent = 'Error: ' + e.message;
+    toast('Pipeline Failed', e.message, 'error');
+    for (let i = 1; i <= 5; i++) {
+      if (document.getElementById(`step-${i}`).className.includes('running')) {
+        document.getElementById(`step-${i}`).className = 'step-card error';
+      }
+    }
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span>⚡</span> Run Full Pipeline';
+  pipelineRunning = false;
+  setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; bar.style.background = ''; }, 3000);
+}
+
+async function runStep(step) {
+  const endpoints = {
+    fetch: '/pipeline/fetch',
+    filter: '/pipeline/filter',
+    generate: '/pipeline/generate-blogs',
+    publish: '/pipeline/publish'
+  };
+  const stepNames = { fetch: '📡 Fetch', filter: '🤖 Filter', generate: '✍️ Generate', publish: '🌐 Publish' };
+  const output = document.getElementById('pipelineOutput');
+  output.textContent = `Running ${stepNames[step]}...\n`;
+  try {
+    const result = await api(endpoints[step], { method: 'POST' });
+    output.textContent = JSON.stringify(result, null, 2);
+    toast(`${stepNames[step]} Complete`, 'Step executed successfully', 'success');
+  } catch(e) {
+    output.textContent = 'Error: ' + e.message;
+    toast('Step Failed', e.message, 'error');
+  }
+}
+
+// ─── SCHEMES ───
+async function loadSchemes(page = 1) {
+  currentPage.schemes = page;
+  const search = document.getElementById('schemeSearch')?.value || '';
+  const category = document.getElementById('filterCategory')?.value || '';
+  const relevant = document.getElementById('filterRelevant')?.value || '';
+
+  let params = `?page=${page}&limit=15`;
+  if (search) params += `&search=${encodeURIComponent(search)}`;
+  if (category) params += `&category=${encodeURIComponent(category)}`;
+  if (relevant === 'true') params += '&is_relevant=true';
+  if (relevant === 'false') params += '&is_relevant=false';
+
+  const tbody = document.getElementById('schemesTableBody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">Loading...</td></tr>';
+
+  try {
+    const data = await api('/schemes' + params);
+    document.getElementById('schemes-count').textContent = `${data.total} schemes`;
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><h4>No schemes found</h4><p>Run the pipeline to fetch schemes</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(s => `
+      <tr>
+        <td>
+          <div class="table-title">
+            <a href="${s.url}" target="_blank" title="${s.title}">${s.title}</a>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.ai_summary ? s.ai_summary.substring(0, 80) + '...' : (s.summary || '').substring(0, 80) + '...'}</div>
+        </td>
+        <td>${s.category ? `<span class="badge badge-blue">${s.category}</span>` : '<span class="badge badge-gray">Unclassified</span>'}</td>
+        <td>${statusBadge(s.is_relevant, s.status)}</td>
+        <td><span style="font-size:12px;color:var(--text3)">${s.source || '—'}</span></td>
+        <td><span style="font-size:11px;color:var(--text3)">${formatDate(s.published_date)}</span></td>
+        <td>${s.blog_generated ? '<span class="badge badge-green">✅ Done</span>' : '<span class="badge badge-gray">Pending</span>'}</td>
+      </tr>
+    `).join('');
+
+    renderPagination('schemesPagination', data.page, data.pages, loadSchemes);
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--danger)">Error loading schemes. Check backend connection.</td></tr>';
+  }
+}
+
+// ─── BLOGS ───
+async function loadBlogs(page = 1) {
+  currentPage.blogs = page;
+  const status = document.getElementById('filterBlogStatus')?.value || '';
+  let params = `?page=${page}&limit=10`;
+  if (status) params += `&status=${status}`;
+
+  const tbody = document.getElementById('blogsTableBody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3)">Loading...</td></tr>';
+
+  try {
+    const data = await api('/blogs' + params);
+    document.getElementById('blogs-count').textContent = `${data.total} posts`;
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📝</div><h4>No blogs yet</h4><p>Run the pipeline to generate blog posts</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(b => `
+      <tr>
+        <td>
+          <div class="table-title" title="${b.title}">${b.title}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${(b.meta_description || '').substring(0, 80)}...</div>
+        </td>
+        <td><span class="badge badge-blue">${b.category || 'General'}</span></td>
+        <td>${b.status === 'published' ? '<span class="badge badge-green">Published</span>' : '<span class="badge badge-warning">Draft</span>'}</td>
+        <td><div style="display:flex;flex-wrap:wrap;gap:3px">${(b.tags || []).slice(0, 2).map(t => `<span class="badge badge-gray">${t}</span>`).join('')}</div></td>
+        <td><span style="font-size:11px;color:var(--text3)">${formatDate(b.created_at)}</span></td>
+        <td>
+          <div style="display:flex;gap:5px">
+            <button class="btn btn-outline btn-sm" onclick="previewBlog('${b._id}')">👁 Preview</button>
+            ${b.wp_url ? `<a href="${b.wp_url}" target="_blank" class="btn btn-outline btn-sm">🌐 WP</a>` : ''}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    renderPagination('blogsPagination', data.page, data.pages, loadBlogs);
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--danger)">Error loading blogs.</td></tr>';
+  }
+}
+
+async function previewBlog(id) {
+  try {
+    const blog = await api(`/blogs/${id}`);
+    document.getElementById('modalBlogTitle').textContent = blog.title;
+    document.getElementById('modalBlogBody').innerHTML = blog.content_html;
+    const statusEl = document.getElementById('modalBlogStatus');
+    statusEl.textContent = blog.status === 'published' ? '✅ Published' : '📝 Draft';
+    statusEl.className = `badge ${blog.status === 'published' ? 'badge-green' : 'badge-warning'}`;
+    const wpLink = document.getElementById('modalWpLink');
+    if (blog.wp_url) {
+      wpLink.href = blog.wp_url;
+      wpLink.style.display = 'inline-flex';
+    } else {
+      wpLink.style.display = 'none';
+    }
+    document.getElementById('blogModal').classList.add('open');
+  } catch(e) {
+    toast('Error', 'Could not load blog preview', 'error');
+  }
+}
+
+function closeModal() {
+  document.getElementById('blogModal').classList.remove('open');
+}
+
+// ─── LOGS ───
+async function loadLogs() {
+  const container = document.getElementById('logsContainer');
+  try {
+    const logs = await api('/logs?limit=30');
+    if (!logs.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h4>No logs yet</h4><p>Run the pipeline to see logs</p></div>';
+      return;
+    }
+    const typeConfig = {
+      'full_pipeline': { label: 'Full Pipeline', cls: 'badge-blue' },
+      'fetch': { label: 'Fetch', cls: 'badge-teal' },
+      'filter': { label: 'AI Filter', cls: 'badge-purple' },
+      'generate_blog': { label: 'Generate Blog', cls: 'badge-orange' },
+      'publish': { label: 'Publish WP', cls: 'badge-green' },
+    };
+    container.innerHTML = logs.map(log => {
+      const cfg = typeConfig[log.type] || { label: log.type, cls: 'badge-gray' };
+      const summary = log.results ? summarizeResult(log.type, log.results) : '';
+      return `
+        <div class="log-item">
+          <span class="log-type-badge badge ${cfg.cls}">${cfg.label}</span>
+          <span class="log-time">${formatDate(log.timestamp, true)}</span>
+          <span class="log-details">${summary}</span>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>Error loading logs</p></div>';
+  }
+}
+
+function summarizeResult(type, r) {
+  if (type === 'fetch') return `Fetched ${r.total_fetched || 0}, ${r.total_new || 0} new`;
+  if (type === 'filter') return `Processed ${r.processed || 0}, ${r.relevant || 0} relevant`;
+  if (type === 'generate_blog') return `Generated ${r.generated || 0} blogs`;
+  if (type === 'publish') return `Published ${r.published || 0} to WordPress`;
+  if (type === 'full_pipeline') return `Pipeline complete`;
+  return '';
+}
+
+// ─── API DOCS ───
+function renderApiDocs() {
+  const pipelineEndpoints = [
+    { method: 'POST', path: '/pipeline/run-all', desc: 'Run full pipeline (all 5 steps)', body: 'No body required' },
+    { method: 'POST', path: '/pipeline/fetch', desc: 'Fetch schemes from RSS feeds', body: 'No body required' },
+    { method: 'POST', path: '/pipeline/filter?limit=20', desc: 'AI filter & categorize schemes', body: 'No body required' },
+    { method: 'POST', path: '/pipeline/generate-blogs?limit=5', desc: 'Generate SEO blog posts', body: 'No body required' },
+    { method: 'POST', path: '/pipeline/publish?limit=5', desc: 'Publish blogs to WordPress', body: 'No body required' },
+  ];
+  const dataEndpoints = [
+    { method: 'GET', path: '/schemes?page=1&limit=20', desc: 'Get paginated schemes list', body: null },
+    { method: 'GET', path: '/schemes/{scheme_id}', desc: 'Get single scheme details', body: null },
+    { method: 'GET', path: '/blogs?page=1&limit=10', desc: 'Get paginated blogs list', body: null },
+    { method: 'GET', path: '/blogs/{blog_id}', desc: 'Get single blog with HTML content', body: null },
+  ];
+  const monitorEndpoints = [
+    { method: 'GET', path: '/stats', desc: 'Dashboard statistics', body: null },
+    { method: 'GET', path: '/logs?limit=20', desc: 'Pipeline execution logs', body: null },
+    { method: 'GET', path: '/health', desc: 'System health check', body: null },
+    { method: 'DELETE', path: '/admin/clear-all', desc: '⚠️ Clear all data (irreversible)', body: null },
+  ];
+
+  ['apiPipeline', 'apiData', 'apiMonitor'].forEach((id, i) => {
+    const endpoints = [pipelineEndpoints, dataEndpoints, monitorEndpoints][i];
+    document.getElementById(id).innerHTML = endpoints.map(ep => `
+      <div class="api-endpoint">
+        <div class="api-endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+          <span class="method-badge method-${ep.method.toLowerCase()}">${ep.method}</span>
+          <span class="endpoint-path">${ep.path}</span>
+          <span class="endpoint-desc">${ep.desc}</span>
+          <span style="color:var(--text3);margin-left:8px;font-size:12px">▾</span>
+        </div>
+        <div class="api-endpoint-body">
+          <div style="margin-bottom:8px;font-size:12px;color:var(--text2)">Full URL: <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:11px">http://localhost:8000/api/v1${ep.path}</code></div>
+          <div class="code-block">
+<span class="comment">// Example: fetch with JavaScript</span>
+<span class="key">const</span> response = <span class="key">await</span> fetch(<span class="string">"http://localhost:8000/api/v1${ep.path}"</span>, {
+  <span class="key">method</span>: <span class="string">"${ep.method}"</span>,
+  <span class="key">headers</span>: { <span class="string">"Content-Type"</span>: <span class="string">"application/json"</span> }
+});
+<span class="key">const</span> data = <span class="key">await</span> response.json();
+console.log(data);</div>
+        </div>
+      </div>
+    `).join('');
+  });
+}
+
+// ─── SETTINGS ───
+function saveSettings() {
+  API = document.getElementById('settingApiUrl').value;
+  localStorage.setItem('apiUrl', API);
+  toast('Saved', 'API URL updated', 'success');
+}
+
+async function clearAllData() {
+  if (!confirm('Are you sure? This will delete ALL data permanently!')) return;
+  try {
+    await api('/admin/clear-all', { method: 'DELETE' });
+    toast('Cleared', 'All data has been deleted', 'success');
+    loadDashboard();
+  } catch(e) {
+    toast('Error', e.message, 'error');
+  }
+}
+
+async function loadStorageStats() {
+  try {
+    const stats = await api('/admin/storage-stats');
+    document.getElementById('storageStats').innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="background:var(--surface2);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700">${stats.total_schemes}</div>
+          <div style="font-size:11px;color:var(--text3)">Total Schemes</div>
+        </div>
+        <div style="background:var(--success-light);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--success)">${stats.relevant_schemes}</div>
+          <div style="font-size:11px;color:var(--text3)">Relevant ✅</div>
+        </div>
+        <div style="background:var(--danger-light);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--danger)">${stats.irrelevant_schemes}</div>
+          <div style="font-size:11px;color:var(--text3)">Irrelevant ❌</div>
+        </div>
+        <div style="background:var(--primary-light);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--primary)">${stats.blogs_published}</div>
+          <div style="font-size:11px;color:var(--text3)">Published Blogs</div>
+        </div>
+        <div style="background:var(--warning-light);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--warning)">${stats.can_delete_irrelevant}</div>
+          <div style="font-size:11px;color:var(--text3)">Can Delete</div>
+        </div>
+        <div style="background:var(--surface2);padding:10px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700">${stats.logs_total}</div>
+          <div style="font-size:11px;color:var(--text3)">Total Logs</div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    toast('Error', 'Stats load nahi hue', 'error');
+  }
+}
+
+async function runCleanup(irrelevantDays, logsDays) {
+  if (!confirm(`${irrelevantDays} din se purane irrelevant schemes aur ${logsDays} din se purane logs delete honge. Confirm?`)) return;
+  try {
+    const result = await api(`/admin/cleanup?irrelevant_days=${irrelevantDays}&logs_days=${logsDays}`, { method: 'DELETE' });
+    toast('Cleanup Done! 🧹', `${result.deleted_irrelevant_schemes} schemes + ${result.deleted_old_logs} logs deleted`, 'success');
+    loadStorageStats();
+  } catch(e) {
+    toast('Error', e.message, 'error');
+  }
+}
+
+
+// ─── HELPERS ───
+function statusBadge(isRelevant, status) {
+  if (isRelevant === null || isRelevant === undefined) return '<span class="badge badge-gray">⏳ Pending</span>';
+  if (isRelevant === true) return '<span class="badge badge-green">✅ Relevant</span>';
+  return '<span class="badge badge-red">❌ Filtered</span>';
+}
+
+function formatDate(dateStr, withTime = false) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '—';
+  const opts = { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric',
+    timeZone: 'Asia/Kolkata'
+  };
+  if (withTime) {
+    opts.hour = '2-digit';
+    opts.minute = '2-digit';
+    opts.hour12 = true;
+    opts.timeZone = 'Asia/Kolkata';
+  }
+  return d.toLocaleDateString('en-IN', opts);
+}
+
+function renderPagination(containerId, current, total, loadFn) {
+  const container = document.getElementById(containerId);
+  if (total <= 1) { container.innerHTML = ''; return; }
+  let btns = '';
+  for (let i = 1; i <= Math.min(total, 7); i++) {
+    btns += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="${loadFn.name}(${i})">${i}</button>`;
+  }
+  container.innerHTML = `
+    <span class="page-info">Page ${current} of ${total}</span>
+    <div class="page-btns">
+      <button class="page-btn" onclick="${loadFn.name}(${current - 1})" ${current <= 1 ? 'disabled' : ''}>‹</button>
+      ${btns}
+      <button class="page-btn" onclick="${loadFn.name}(${current + 1})" ${current >= total ? 'disabled' : ''}>›</button>
+    </div>
+  `;
+}
+
+function debounce(fn, delay) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Update next run countdown every minute
+
+// function updateNextRun() {
+//   const now = new Date();
+//   const next = new Date(now.getTime() + 1440 * 60000);
+//   const diffH = Math.floor((next - now) / 3600000);
+//   const diffM = Math.floor(((next - now) % 3600000) / 60000);
+//   document.getElementById('nextRun').textContent = `Next: ${diffH}h ${diffM}m`;
+// }
+
+
+// updateNextRun function:
+
+function updateNextRun() {
+  const now = new Date();
+  const next = new Date();
+  next.setHours(7, 0, 0, 0);
+  if (now >= next) next.setDate(next.getDate() + 1); // kal 7 baje
+  const diffH = Math.floor((next - now) / 3600000);
+  const diffM = Math.floor(((next - now) % 3600000) / 60000);
+  document.getElementById('nextRun').textContent = `Next: ${diffH}h ${diffM}m`;
+}
+
+// Close modal on overlay click
+document.getElementById('blogModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── INIT ───
+loadDashboard();
+updateNextRun();
+setInterval(updateNextRun, 60000);
+</script>
+</body>
+</html>
